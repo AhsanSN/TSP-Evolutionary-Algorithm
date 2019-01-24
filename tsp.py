@@ -3,6 +3,7 @@ Notes:
 Sample Chromosome = [1,2,4,65,12,51,42,....32] // length = 194
 '''
 from random import *
+import math
 
 def generateRadomChromosome(): 
     chro = []
@@ -29,21 +30,28 @@ def readData():
     for x in f:
         #extract parts
         parts= []
-        x = x[:-1]
-        print(x)
         temp = ""
         for j in x:
-            temp = temp + str(x);
-            if(j==" "):
+            if((j==' ')or(j=='\n')):
                 parts.append(temp)
                 temp = ""
-        #print(parts)
-        #coods.insert(i,parts)
+            else:
+                temp = temp + str(j);
+        coods.insert(i,parts)
         i=i+1
-        
-    print(coods)
+    return(coods)
 
-readData()
+def getCoodsFromCity(cityNumber):
+    data = readData()
+    return [data[cityNumber-1][1],data[cityNumber-1][2]]
+
+def getDistFromCity(cityNumber1, cityNumber2):
+    cityCoods1 = getCoodsFromCity(cityNumber1)
+    cityCoods2 = getCoodsFromCity(cityNumber2)
+    return (math.sqrt((float(cityCoods1[0])-float(cityCoods2[0]))**2 + (float(cityCoods1[1])-float(cityCoods2[1]))**2))
+    #+ (int(cityNumber1[1])-int(cityNumber2[1]))**2 
+
+print(getDistFromCity(3,4))
 
 '''
 NODE_COORD_SECTION
