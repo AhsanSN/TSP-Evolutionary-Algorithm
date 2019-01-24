@@ -5,6 +5,7 @@ Sample Chromosome = [1,2,4,65,12,51,42,....32] // length = 194
 from random import *
 import math
 
+# helper functions
 def generateRadomChromosome(): 
     chro = []
     for i in range (0,194):
@@ -15,14 +16,18 @@ def generateRadomChromosome():
         chro.insert(i,randNo)
     return(chro)
 
+def getWeightOfChromo(chromo):
+    total = getDistFromCity(chromo[0], chromo[1])
+    for i in range (2, 194):
+        total = total + getDistFromCity[i]
+    return(total)
+
 def generateRandomPopulation(): # generates Population size: 30
     population = []
     for i in range (0,30):
         population.insert(i,generateRadomChromosome())
     print(len(population))
     
-#generateRandomPopulation();
-
 def readData():
     f = open("data.txt", "r")
     coods = []
@@ -49,12 +54,14 @@ def getDistFromCity(cityNumber1, cityNumber2):
     cityCoods1 = getCoodsFromCity(cityNumber1)
     cityCoods2 = getCoodsFromCity(cityNumber2)
     return (math.sqrt((float(cityCoods1[0])-float(cityCoods2[0]))**2 + (float(cityCoods1[1])-float(cityCoods2[1]))**2))
-    #+ (int(cityNumber1[1])-int(cityNumber2[1]))**2 
 
-print(getDistFromCity(3,4))
+#main
+def main():
+    
 
+main();
 '''
-NODE_COORD_SECTION
+NODE_COORD_SECTION1
 1 24748.3333 50840.0000
 2 24758.8889 51211.9444
 3 24827.2222 51394.7222
