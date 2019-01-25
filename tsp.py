@@ -6,7 +6,7 @@ from random import *
 import math
 
 # helper functions
-def generateRadomChromosome(): 
+def generateRandomChromosome(): 
     chro = []
     for i in range (0,194):
         #generate random number
@@ -16,18 +16,18 @@ def generateRadomChromosome():
         chro.insert(i,randNo)
     return(chro)
 
-def getWeightOfChromo(chromo):
-    total = getDistFromCity(chromo[0], chromo[1])
+def getFitnessOfChromo(chromo, data):
+    total = getDistFromCity(chromo[0], chromo[1], data)
     for i in range (2, 194):
-        total = total + getDistFromCity[i]
+        total = total + getDistFromCity(chromo[i-1],chromo[i], data)
     return(total)
 
 def generateRandomPopulation(): # generates Population size: 30
     population = []
     for i in range (0,30):
-        population.insert(i,generateRadomChromosome())
-    print(len(population))
-    
+        population.insert(i,generateRandomChromosome())
+    return(population)
+
 def readData():
     f = open("data.txt", "r")
     coods = []
@@ -46,20 +46,34 @@ def readData():
         i=i+1
     return(coods)
 
-def getCoodsFromCity(cityNumber):
-    data = readData()
+def getCoodsFromCity(cityNumber, data):
     return [data[cityNumber-1][1],data[cityNumber-1][2]]
 
-def getDistFromCity(cityNumber1, cityNumber2):
-    cityCoods1 = getCoodsFromCity(cityNumber1)
-    cityCoods2 = getCoodsFromCity(cityNumber2)
+def getDistFromCity(cityNumber1, cityNumber2, data):
+    cityCoods1 = getCoodsFromCity(cityNumber1, data)
+    cityCoods2 = getCoodsFromCity(cityNumber2, data)
     return (math.sqrt((float(cityCoods1[0])-float(cityCoods2[0]))**2 + (float(cityCoods1[1])-float(cityCoods2[1]))**2))
+
+#parent selection procedures
+
+def fitnessProportionalSelection():
+    
+
 
 #main
 def main():
+    data = readData()
+    # generate initial population
+    population = generateRandomPopulation()
+    fitness = []
+    # compute fitness
+    for i in population:
+        fitness.append(getFitnessOfChromo(i, data))
+    print(fitness)
+    # Population[3] has the fitness[3]
     
-
 main();
+
 '''
 NODE_COORD_SECTION1
 1 24748.3333 50840.0000
