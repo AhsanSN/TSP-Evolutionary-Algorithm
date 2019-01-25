@@ -4,6 +4,7 @@ Sample Chromosome = [1,2,4,65,12,51,42,....32] // length = 194
 '''
 from random import *
 import math
+import heapq #finding nth largest
 
 # helper functions
 def generateRandomChromosome(): 
@@ -59,17 +60,50 @@ def getDistFromCity(cityNumber1, cityNumber2, data):
 def fitnessProportionalSelection(population, fitness):
     fitnessSum = 0
     fitnessProportions = []
+    parentsIndices = []
     for i in fitness:
         fitnessSum = fitnessSum + i
     for i in fitness:
         fitnessProportions.append(i/fitnessSum)
+    #choosing 1st parent
     randNo = random()
-    print("rand: ",randNo)
-    for i in range (0,29):
-        print(fitnessProportions[i])
-        if ((randNo>fitnessProportions[i]) and (randNo<fitnessProportions[i+1])):
-            print(fitnessProportions[i])
-            print(fitnessProportions[i+1])
+    lower = 0
+    for i in range (0,30):
+        if ((randNo>lower) and (randNo<lower + fitnessProportions[i])):
+            parentsIndices.append(i)
+            print("-----1st parent index------",i)
+        lower = lower + fitnessProportions[i]
+    #choosing 2nd parent
+    randNo = random()
+    lower = 0
+    findParentLoop = True
+    while(findParentLoop == True):
+        for i in range (0,30):
+            if ((randNo>lower) and (randNo<lower + fitnessProportions[i])):
+                if(i!=parentsIndices[0]): #not same as previous parent
+                    parentsIndices.append(i)
+                    findParentLoop = False
+                    print("-----2nd parent index------",i)                    
+            lower = lower + fitnessProportions[i]
+    return parentsIndices
+
+def nth_largest(n, iter):
+    return heapq.nlargest(n, iter)[-1]
+
+def rankbasedSelection(population, fitness):
+    print(fitness)
+    #creating array for storing ranks
+    ranks = []
+    for i in range (len(fitness)):
+        ranks.append(0)
+    #finding ranks
+    for i in range (1,len(fitness)):
+        print(i)
+        nthLargestElement = nth_largest(i, fitness)
+        for j in range (len(fitness)):
+            if (j == fitness[j]):
+                ranks[j] = i;
+    print(ranks)
 
 
 #main
@@ -84,6 +118,6 @@ def main():
     #print("fitness:",fitness)
     # Population[3] has the fitness[3]
     # choosing parents
-    fitnessProportionalSelection(population, fitness)
+    rankbasedSelection(population, fitness)
     
 main();
