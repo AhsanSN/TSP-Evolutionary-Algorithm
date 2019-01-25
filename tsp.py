@@ -196,7 +196,7 @@ def crossOver(parentsIndex, population, nChildren):
     for i in range (1,nChildren):
         1;
     # child 1    
-    start = nPortions*3
+    start = nPortions*0
     child1[start:start+ nPortions] = parent1[start:start+ nPortions]
     isChildComplete = False;
     childIndex = start+ nPortions
@@ -214,6 +214,26 @@ def crossOver(parentsIndex, population, nChildren):
             childIndex = 0
         if(childIndex == start):
             isChildComplete = True
+    # child 2
+    start = nPortions*0
+    child2[start:start+ nPortions] = parent2[start:start+ nPortions]
+    isChildComplete = False;
+    childIndex = start+ nPortions
+    ParentIndex = start+ nPortions
+    while(isChildComplete==False):
+        if(parent1[ParentIndex] not in child2[start:start+ nPortions]):
+            child2[childIndex] = parent1[ParentIndex];
+            childIndex+= 1
+            ParentIndex+= 1
+        elif (parent1[ParentIndex] in child2[start:start+ nPortions]):
+            ParentIndex+= 1
+        if (ParentIndex==len(child2)):
+            ParentIndex = 0
+        if (childIndex==len(child2)):
+            childIndex = 0
+        if(childIndex == start):
+            isChildComplete = True
+    
         
 
     ''''
@@ -222,7 +242,7 @@ def crossOver(parentsIndex, population, nChildren):
     
     print(child1)
     '''
-    print(child1)
+    print(child2)
         
 
 #main
