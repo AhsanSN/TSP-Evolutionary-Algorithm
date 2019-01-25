@@ -91,19 +91,45 @@ def nth_largest(n, iter):
     return heapq.nlargest(n, iter)[-1]
 
 def rankbasedSelection(population, fitness):
-    print(fitness)
+    rankSum = 0
+    ranksProportion = []
+    parentsIndices = []
     #creating array for storing ranks
     ranks = []
     for i in range (len(fitness)):
         ranks.append(0)
     #finding ranks
-    for i in range (1,len(fitness)):
-        print(i)
+    for i in range (1,len(fitness)+1):
         nthLargestElement = nth_largest(i, fitness)
         for j in range (len(fitness)):
-            if (j == fitness[j]):
+            if (nthLargestElement == fitness[j]):
                 ranks[j] = i;
-    print(ranks)
+    # rank sum for calculation proportions
+    for i in ranks:
+        rankSum = rankSum + i
+    for i in ranks:
+        ranksProportion.append(i/rankSum)
+    #choosing 1st parent
+    randNo = random()
+    lower = 0
+    for i in range (0,30):
+        if ((randNo>lower) and (randNo<lower + ranksProportion[i])):
+            parentsIndices.append(i)
+            print("-----1st parent index------",i)
+        lower = lower + ranksProportion[i]
+    #choosing 2nd parent
+    randNo = random()
+    lower = 0
+    findParentLoop = True
+    while(findParentLoop == True):
+        for i in range (0,30):
+            if ((randNo>lower) and (randNo<lower + ranksProportion[i])):
+                if(i!=parentsIndices[0]): #not same as previous parent
+                    parentsIndices.append(i)
+                    findParentLoop = False
+                    print("-----2nd parent index------",i)                    
+            lower = lower + ranksProportion[i]
+    return parentsIndices
 
 
 #main
