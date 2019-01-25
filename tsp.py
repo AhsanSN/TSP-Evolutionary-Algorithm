@@ -57,7 +57,7 @@ def getDistFromCity(cityNumber1, cityNumber2, data):
 
 #parent selection procedures
 
-def fitnessProportionalSelection(population, fitness):
+def fitnessProportionalSelection(fitness):
     fitnessSum = 0
     fitnessProportions = []
     parentsIndices = []
@@ -90,7 +90,7 @@ def fitnessProportionalSelection(population, fitness):
 def nth_largest(n, iter):
     return heapq.nlargest(n, iter)[-1]
 
-def rankbasedSelection(population, fitness):
+def rankbasedSelection(fitness):
     rankSum = 0
     ranksProportion = []
     parentsIndices = []
@@ -131,6 +131,48 @@ def rankbasedSelection(population, fitness):
             lower = lower + ranksProportion[i]
     return parentsIndices
 
+def binaryTournament(fitness):
+    parentsIndices = []
+    pool1 = []
+    poop2 = []
+    pool1Loop = True
+    pool2Loop = True
+    pool1Best = 0
+    pool2Best = 0
+    #players for pool1
+    while (pool1Loop):
+        for i in range (2):
+            randNo = randint(0, 29)
+            if (pool1[0] != randNo):
+                pool1.append(randNo)
+                pool1Loop = False
+    print(fitness[pool1[0]],fitness[pool1[1]])
+    print(pool1)
+    #best from pool 1
+    if(fitness[pool1[0]]>fitness[pool1[1]]):
+        pool1Best = pool1[0];
+    if(fitness[pool1[0]]<fitness[pool1[1]]):
+        pool1Best = pool1[1];
+    print(pool1Best)
+
+    
+    #players for pool2
+    while (pool2Loop):
+        for i in range (2):
+            randNo = randint(0, 29)
+            if (pool2[0] != randNo) and (pool1Best != randNo):
+                pool2.append(randNo)
+                pool2Loop = False
+    print(fitness[pool2[0]],fitness[pool2[1]])
+    print(pool2)
+    #best from pool 1
+    if(fitness[pool2[0]]>fitness[pool2[1]]):
+        pool2Best = pool1[0];
+    if(fitness[pool2[0]]<fitness[pool2[1]]):
+        pool2Best = pool2[1];
+    print(pool2Best)
+
+#
 
 #main
 def main():
@@ -143,7 +185,10 @@ def main():
         fitness.append(getFitnessOfChromo(i, data))
     #print("fitness:",fitness)
     # Population[3] has the fitness[3]
-    # choosing parents
-    rankbasedSelection(population, fitness)
+    
+    # choosing parents 
+    #parents = fitnessProportionalSelection(fitness)
+    #parents = rankbasedSelection(fitness)
+    parents = binaryTournament(fitness)
     
 main();
