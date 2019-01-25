@@ -134,45 +134,48 @@ def rankbasedSelection(fitness):
 def binaryTournament(fitness):
     parentsIndices = []
     pool1 = []
-    poop2 = []
+    pool2 = []
     pool1Loop = True
     pool2Loop = True
     pool1Best = 0
     pool2Best = 0
+
     #players for pool1
     while (pool1Loop):
         for i in range (2):
             randNo = randint(0, 29)
-            if (pool1[0] != randNo):
+            if(len(pool1)==1):
+                if (pool1[0] != randNo):
+                    pool1.append(randNo)
+                    pool1Loop = False
+            if(len(pool1)==0):
                 pool1.append(randNo)
-                pool1Loop = False
-    print(fitness[pool1[0]],fitness[pool1[1]])
-    print(pool1)
     #best from pool 1
     if(fitness[pool1[0]]>fitness[pool1[1]]):
         pool1Best = pool1[0];
     if(fitness[pool1[0]]<fitness[pool1[1]]):
         pool1Best = pool1[1];
-    print(pool1Best)
-
+    parentsIndices.append(pool1Best)
     
     #players for pool2
     while (pool2Loop):
         for i in range (2):
             randNo = randint(0, 29)
-            if (pool2[0] != randNo) and (pool1Best != randNo):
+            if(len(pool2)==1):
+                if (pool2[0] != randNo) and (pool1Best != randNo):
+                    pool2.append(randNo)
+                    pool2Loop = False
+            if(len(pool2)==0):
                 pool2.append(randNo)
-                pool2Loop = False
-    print(fitness[pool2[0]],fitness[pool2[1]])
-    print(pool2)
-    #best from pool 1
+    #best from pool 2
     if(fitness[pool2[0]]>fitness[pool2[1]]):
-        pool2Best = pool1[0];
+        pool2Best = pool2[0];
     if(fitness[pool2[0]]<fitness[pool2[1]]):
         pool2Best = pool2[1];
-    print(pool2Best)
-
-#
+    parentsIndices.append(pool2Best)
+    return(parentsIndices)
+    
+    
 
 #main
 def main():
