@@ -23,9 +23,9 @@ def getFitnessOfChromo(chromo, data):
         total = total + getDistFromCity(chromo[i-1],chromo[i], data)
     return(total)
 
-def generateRandomPopulation(): # generates Population size: 30
+def generateRandomPopulation(size): # generates Population size: 30
     population = []
-    for i in range (0,30):
+    for i in range (0,size):
         population.insert(i,generateRandomChromosome())
     return(population)
 
@@ -68,7 +68,7 @@ def fitnessProportionalSelection(fitness):
     #choosing 1st parent
     randNo = random()
     lower = 0
-    for i in range (0,30):
+    for i in range (len(fitness)):
         if ((randNo>lower) and (randNo<lower + fitnessProportions[i])):
             parentsIndices.append(i)
             print("-----1st parent index------",i)
@@ -78,7 +78,7 @@ def fitnessProportionalSelection(fitness):
     lower = 0
     findParentLoop = True
     while(findParentLoop == True):
-        for i in range (0,30):
+        for i in range (len(fitness)):
             if ((randNo>lower) and (randNo<lower + fitnessProportions[i])):
                 if(i!=parentsIndices[0]): #not same as previous parent
                     parentsIndices.append(i)
@@ -112,7 +112,7 @@ def rankbasedSelection(fitness):
     #choosing 1st parent
     randNo = random()
     lower = 0
-    for i in range (0,30):
+    for i in range (len(fitness)):
         if ((randNo>lower) and (randNo<lower + ranksProportion[i])):
             parentsIndices.append(i)
             print("-----1st parent index------",i)
@@ -122,7 +122,7 @@ def rankbasedSelection(fitness):
     lower = 0
     findParentLoop = True
     while(findParentLoop == True):
-        for i in range (0,30):
+        for i in range (len(fitness)):
             if ((randNo>lower) and (randNo<lower + ranksProportion[i])):
                 if(i!=parentsIndices[0]): #not same as previous parent
                     parentsIndices.append(i)
@@ -143,7 +143,7 @@ def binaryTournament(fitness):
     #players for pool1
     while (pool1Loop):
         for i in range (2):
-            randNo = randint(0, 29)
+            randNo = randint(0, len(fitness)-1)
             if(len(pool1)==1):
                 if (pool1[0] != randNo):
                     pool1.append(randNo)
@@ -160,7 +160,7 @@ def binaryTournament(fitness):
     #players for pool2
     while (pool2Loop):
         for i in range (2):
-            randNo = randint(0, 29)
+            randNo = randint(0, len(fitness)-1)
             if(len(pool2)==1):
                 if (pool2[0] != randNo) and (pool1Best != randNo):
                     pool2.append(randNo)
@@ -181,7 +181,7 @@ def binaryTournament(fitness):
 def main():
     data = readData()
     # generate initial population
-    population = generateRandomPopulation()
+    population = generateRandomPopulation(30)
     fitness = []
     # compute fitness
     for i in population:
@@ -192,6 +192,7 @@ def main():
     # choosing parents 
     #parents = fitnessProportionalSelection(fitness)
     #parents = rankbasedSelection(fitness)
-    parents = binaryTournament(fitness)
+    parentsIndex = binaryTournament(fitness)
+    print(parentsIndex)
     
 main();
