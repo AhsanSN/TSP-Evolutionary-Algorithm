@@ -237,21 +237,19 @@ def crossOver(parentsIndex, population, nChildren):
     return(producedChildren)        
 
 def mutation(children, rate):
-    for i in range (len(children)):
+    mutatedChildren = children
+    for i in range (len(mutatedChildren)):
         randNo = random()
-        print(randNo)
         if (randNo<rate):
-            print("yes")
             # switching calues
             switchPos1 = randint(0, int(194/2))
             switchPos2 = randint(int(194/2), 194)
-            print(switchPos1,switchPos2)
-            temp = children[i][switchPos1]
-            children[i][switchPos1] = children[i][switchPos2]
-            children[i][switchPos2] = temp
-    children[0] = "------------------------------------------------------asd"
+            temp = mutatedChildren[i][switchPos1]
+            mutatedChildren[i][switchPos1] = mutatedChildren[i][switchPos2]
+            mutatedChildren[i][switchPos2] = temp
+    mutatedChildren[0] = "------------------------------------------------------asd"
     #print(children)
-    return children
+    return mutatedChildren
         
 #main
 
@@ -271,9 +269,11 @@ def main():
     #parents = rankbasedSelection(fitness)
     parentsIndex = binaryTournament(fitness)
     children = crossOver(parentsIndex, population, 10);
-    childrena = mutation(children, 0.5)
-    print(childrena)
-    if (children==childrena):
+    mutatedChildren = mutation(children, 0.5)
+    print("org:",children)
+    print("---------")
+    print("fake:",mutatedChildren)
+    if ((children)==(mutatedChildren)):
         print("asdasdasd")
     
 main();
