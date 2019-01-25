@@ -11,9 +11,9 @@ def generateRandomChromosome():
     chro = []
     for i in range (0,194):
         #generate random number
-        randNo = randint(0, 194)
+        randNo = randint(1, 194)
         while randNo in chro:
-            randNo = randint(0, 194)
+            randNo = randint(1, 194)
         chro.insert(i,randNo)
     return(chro)
 
@@ -175,9 +175,58 @@ def binaryTournament(fitness):
     parentsIndices.append(pool2Best)
     return(parentsIndices)
     
+def crossOver(parentsIndex, population, nChildren):
+    parent1 = population[parentsIndex[0]]
+    parent2 = population[parentsIndex[1]]
+    print("parent 1: ", (parent1))
+    print("parent 2: ", parent2)
+
+    nPortions = int(194/nChildren)
+    print(nPortions)
     
+    child1 = []
+    child2 = []
+    #generating template
+    for i in range(194):
+        child1.append(-222)
+        child2.append(-222)
+
+    #generating child 
+    start = 0
+    for i in range (1,nChildren):
+        1;
+    # child 1    
+    start = nPortions*3
+    child1[start:start+ nPortions] = parent1[start:start+ nPortions]
+    isChildComplete = False;
+    childIndex = start+ nPortions
+    ParentIndex = start+ nPortions
+    while(isChildComplete==False):
+        if(parent2[ParentIndex] not in child1[start:start+ nPortions]):
+            child1[childIndex] = parent2[ParentIndex];
+            childIndex+= 1
+            ParentIndex+= 1
+        elif (parent2[ParentIndex] in child1[start:start+ nPortions]):
+            ParentIndex+= 1
+        if (ParentIndex==len(child1)):
+            ParentIndex = 0
+        if (childIndex==len(child1)):
+            childIndex = 0
+        if(childIndex == start):
+            isChildComplete = True
+        
+
+    ''''
+        child2[:nPortions] = parent2[:nPortions]
+        child2[nPortions:] = parent1[nPortions:]
+    
+    print(child1)
+    '''
+    print(child1)
+        
 
 #main
+
 def main():
     data = readData()
     # generate initial population
@@ -194,5 +243,6 @@ def main():
     #parents = rankbasedSelection(fitness)
     parentsIndex = binaryTournament(fitness)
     print(parentsIndex)
+    crossOver(parentsIndex, population, 10);
     
 main();
