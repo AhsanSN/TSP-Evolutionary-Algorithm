@@ -178,11 +178,11 @@ def binaryTournament(fitness):
 def crossOver(parentsIndex, population, nChildren):
     parent1 = population[parentsIndex[0]]
     parent2 = population[parentsIndex[1]]
-    print("parent 1: ", (parent1))
-    print("parent 2: ", parent2)
-
+    #print("parent 1: ", (parent1))
+    #print("parent 2: ", parent2)
+    
+    producedChildren = []
     nPortions = int(194/nChildren)
-    print(nPortions)
     
     child1 = []
     child2 = []
@@ -192,59 +192,67 @@ def crossOver(parentsIndex, population, nChildren):
         child2.append(-222)
 
     #generating child 
-    start = 0
-    for i in range (1,nChildren):
-        1;
-    # child 1    
-    start = nPortions*0
-    child1[start:start+ nPortions] = parent1[start:start+ nPortions]
-    isChildComplete = False;
-    childIndex = start+ nPortions
-    ParentIndex = start+ nPortions
-    while(isChildComplete==False):
-        if(parent2[ParentIndex] not in child1[start:start+ nPortions]):
-            child1[childIndex] = parent2[ParentIndex];
-            childIndex+= 1
-            ParentIndex+= 1
-        elif (parent2[ParentIndex] in child1[start:start+ nPortions]):
-            ParentIndex+= 1
-        if (ParentIndex==len(child1)):
-            ParentIndex = 0
-        if (childIndex==len(child1)):
-            childIndex = 0
-        if(childIndex == start):
-            isChildComplete = True
-    # child 2
-    start = nPortions*0
-    child2[start:start+ nPortions] = parent2[start:start+ nPortions]
-    isChildComplete = False;
-    childIndex = start+ nPortions
-    ParentIndex = start+ nPortions
-    while(isChildComplete==False):
-        if(parent1[ParentIndex] not in child2[start:start+ nPortions]):
-            child2[childIndex] = parent1[ParentIndex];
-            childIndex+= 1
-            ParentIndex+= 1
-        elif (parent1[ParentIndex] in child2[start:start+ nPortions]):
-            ParentIndex+= 1
-        if (ParentIndex==len(child2)):
-            ParentIndex = 0
-        if (childIndex==len(child2)):
-            childIndex = 0
-        if(childIndex == start):
-            isChildComplete = True
-    
-        
+    for i in range (1,int(nChildren/2)):
+        # child 1    
+        start = nPortions*i
+        child1[start:start+ nPortions] = parent1[start:start+ nPortions]
+        isChildComplete = False;
+        childIndex = start+ nPortions
+        ParentIndex = start+ nPortions
+        while(isChildComplete==False):
+            if(parent2[ParentIndex] not in child1[start:start+ nPortions]):
+                child1[childIndex] = parent2[ParentIndex];
+                childIndex+= 1
+                ParentIndex+= 1
+            elif (parent2[ParentIndex] in child1[start:start+ nPortions]):
+                ParentIndex+= 1
+            if (ParentIndex==len(child1)):
+                ParentIndex = 0
+            if (childIndex==len(child1)):
+                childIndex = 0
+            if(childIndex == start):
+                isChildComplete = True
+        # child 2
+        start = nPortions*i
+        child2[start:start+ nPortions] = parent2[start:start+ nPortions]
+        isChildComplete = False;
+        childIndex = start+ nPortions
+        ParentIndex = start+ nPortions
+        while(isChildComplete==False):
+            if(parent1[ParentIndex] not in child2[start:start+ nPortions]):
+                child2[childIndex] = parent1[ParentIndex];
+                childIndex+= 1
+                ParentIndex+= 1
+            elif (parent1[ParentIndex] in child2[start:start+ nPortions]):
+                ParentIndex+= 1
+            if (ParentIndex==len(child2)):
+                ParentIndex = 0
+            if (childIndex==len(child2)):
+                childIndex = 0
+            if(childIndex == start):
+                isChildComplete = True
+        #adding child
+        producedChildren.append(child1)
+        producedChildren.append(child2)
+    return(producedChildren)        
 
-    ''''
-        child2[:nPortions] = parent2[:nPortions]
-        child2[nPortions:] = parent1[nPortions:]
-    
-    print(child1)
-    '''
-    print(child2)
+def mutation(children, rate):
+    for i in range (len(children)):
+        randNo = random()
+        print(randNo)
+        if (randNo<rate):
+            print("yes")
+            # switching calues
+            switchPos1 = randint(0, int(194/2))
+            switchPos2 = randint(int(194/2), 194)
+            print(switchPos1,switchPos2)
+            temp = children[i][switchPos1]
+            children[i][switchPos1] = children[i][switchPos2]
+            children[i][switchPos2] = temp
+    children[0] = "------------------------------------------------------asd"
+    #print(children)
+    return children
         
-
 #main
 
 def main():
@@ -262,7 +270,10 @@ def main():
     #parents = fitnessProportionalSelection(fitness)
     #parents = rankbasedSelection(fitness)
     parentsIndex = binaryTournament(fitness)
-    print(parentsIndex)
-    crossOver(parentsIndex, population, 10);
+    children = crossOver(parentsIndex, population, 10);
+    childrena = mutation(children, 0.5)
+    print(childrena)
+    if (children==childrena):
+        print("asdasdasd")
     
 main();
