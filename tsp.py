@@ -121,59 +121,45 @@ def rankbasedSelection(fitness, nSelect):
                 lower = lower + ranksProportion[i]
     return parentsIndices
 
-def binaryTournament(fitness):
+def binaryTournament(fitness, nSelect):
     parentsIndices = []
-    pool1 = []
-    pool2 = []
-    pool1Loop = True
-    pool2Loop = True
-    pool1Best = 0
-    pool2Best = 0
-
+    pool = []
+    poolLoop = True
+    poolBest = 0
     #players for pool1
-    while (pool1Loop):
-        for i in range (2):
-            randNo = randint(0, len(fitness)-1)
-            if(len(pool1)==1):
-                if (pool1[0] != randNo):
-                    pool1.append(randNo)
-                    pool1Loop = False
-            if(len(pool1)==0):
-                pool1.append(randNo)
-    #best from pool 1
-    if(fitness[pool1[0]]>fitness[pool1[1]]):
-        pool1Best = pool1[0];
-    if(fitness[pool1[0]]<fitness[pool1[1]]):
-        pool1Best = pool1[1];
-    parentsIndices.append(pool1Best)
-    
-    #players for pool2
-    while (pool2Loop):
-        for i in range (2):
-            randNo = randint(0, len(fitness)-1)
-            if(len(pool2)==1):
-                if (pool2[0] != randNo) and (pool1Best != randNo):
-                    pool2.append(randNo)
-                    pool2Loop = False
-            if(len(pool2)==0):
-                pool2.append(randNo)
-    #best from pool 2
-    if(fitness[pool2[0]]>fitness[pool2[1]]):
-        pool2Best = pool2[0];
-    if(fitness[pool2[0]]<fitness[pool2[1]]):
-        pool2Best = pool2[1];
-    parentsIndices.append(pool2Best)
+    for n in range (nSelect):
+        while (poolLoop):
+            for i in range (2):
+                randNo = randint(0, len(fitness)-1)
+                print(len(parentsIndices),len(fitness))
+                if(len(parentsIndices)==len(fitness)-1):
+                    poolLoop = False;
+                if ((randNo not in parentsIndices) and (len(parentsIndices)<len(fitness)+1)):
+                    if(len(pool)==1):
+                        if (pool[0] != randNo):
+                            pool.append(randNo)
+                            poolLoop = False
+                    if(len(pool)==0):
+                        pool.append(randNo)
+        #best from pool 1
+        if (len(pool)==2):
+            if(fitness[pool[0]]>fitness[pool[1]]):
+                poolBest = pool[0];
+            if(fitness[pool[0]]<fitness[pool[1]]):
+                poolBest = pool[1];
+            parentsIndices.append(poolBest)
+        if (len(parentsIndices)<nSelect):
+            poolLoop = True
+            pool = []
+            poolBest = 0
     return(parentsIndices)
+    
     
 def crossOver(parentsIndex, population, nChildren):
     parent1 = population[parentsIndex[0]]
     parent2 = population[parentsIndex[1]]
-    #print("parent 1: ", (parent1))
-    #print("parent 2: ", parent2)
-    
     producedChildren = []
-    nPortions = int(194/nChildren)
-    
+    nPortions = int(194/nChildren) 
     child1 = []
     child2 = []
     #generating template
@@ -254,8 +240,8 @@ def main():
     
     # choosing parents 
     #parents = fitnessProportionalSelection(fitness, 2)
-    parents = rankbasedSelection(fitness, 131)
-    parentsIndex = binaryTournament(fitness)
+    #parents = rankbasedSelection(fitness, 2)
+    parentsIndex = binaryTournament(fitness,5)
     #crossover
     children = crossOver(parentsIndex, population, 10);
     children = mutation(children, 0.5) #mutated children
