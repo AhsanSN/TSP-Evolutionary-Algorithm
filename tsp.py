@@ -65,10 +65,11 @@ def fitnessProportionalSelection(fitness, nSelect):
         fitnessSum = fitnessSum + i
     for i in fitness:
         fitnessProportions.append(i/fitnessSum)
-    #choosing 1st parent
-    findParentLoop = True
+    #choosing parents
     for n in range (nSelect):
         findParentLoop = True
+        if(len(parentsIndices)==len(fitness)):
+            findParentLoop = False;
         while(findParentLoop == True):
             randNo = random()
             lower = 0
@@ -84,7 +85,7 @@ def fitnessProportionalSelection(fitness, nSelect):
 def nth_largest(n, iter):
     return heapq.nlargest(n, iter)[-1]
 
-def rankbasedSelection(fitness):
+def rankbasedSelection(fitness, nSelect):
     rankSum = 0
     ranksProportion = []
     parentsIndices = []
@@ -103,26 +104,21 @@ def rankbasedSelection(fitness):
         rankSum = rankSum + i
     for i in ranks:
         ranksProportion.append(i/rankSum)
-    #choosing 1st parent
-    randNo = random()
-    lower = 0
-    for i in range (len(fitness)):
-        if ((randNo>lower) and (randNo<lower + ranksProportion[i])):
-            parentsIndices.append(i)
-            print("-----1st parent index------",i)
-        lower = lower + ranksProportion[i]
-    #choosing 2nd parent
-    randNo = random()
-    lower = 0
-    findParentLoop = True
-    while(findParentLoop == True):
-        for i in range (len(fitness)):
-            if ((randNo>lower) and (randNo<lower + ranksProportion[i])):
-                if(i!=parentsIndices[0]): #not same as previous parent
-                    parentsIndices.append(i)
-                    findParentLoop = False
-                    print("-----2nd parent index------",i)                    
-            lower = lower + ranksProportion[i]
+    #choosing parents
+    for n in range (nSelect):
+        findParentLoop = True
+        if(len(parentsIndices)==len(fitness)):
+            findParentLoop = False;
+        while(findParentLoop == True):
+            randNo = random()
+            lower = 0
+            for i in range (len(fitness)):
+                if ((randNo>lower) and (randNo<lower + ranksProportion[i])):
+                    if(i not in parentsIndices):
+                        parentsIndices.append(i)
+                        print("-----",n,"th parent index------",i)
+                        findParentLoop = False
+                lower = lower + ranksProportion[i]
     return parentsIndices
 
 def binaryTournament(fitness):
@@ -257,8 +253,8 @@ def main():
     # Population[3] has the fitness[3]
     
     # choosing parents 
-    parents = fitnessProportionalSelection(fitness, 2)
-    #parents = rankbasedSelection(fitness)
+    #parents = fitnessProportionalSelection(fitness, 2)
+    parents = rankbasedSelection(fitness, 131)
     parentsIndex = binaryTournament(fitness)
     #crossover
     children = crossOver(parentsIndex, population, 10);
