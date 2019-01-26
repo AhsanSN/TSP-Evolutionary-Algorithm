@@ -57,7 +57,7 @@ def getDistFromCity(cityNumber1, cityNumber2, data):
 
 #parent selection procedures
 
-def fitnessProportionalSelection(fitness):
+def fitnessProportionalSelection(fitness, nSelect):
     fitnessSum = 0
     fitnessProportions = []
     parentsIndices = []
@@ -66,25 +66,19 @@ def fitnessProportionalSelection(fitness):
     for i in fitness:
         fitnessProportions.append(i/fitnessSum)
     #choosing 1st parent
-    randNo = random()
-    lower = 0
-    for i in range (len(fitness)):
-        if ((randNo>lower) and (randNo<lower + fitnessProportions[i])):
-            parentsIndices.append(i)
-            print("-----1st parent index------",i)
-        lower = lower + fitnessProportions[i]
-    #choosing 2nd parent
-    randNo = random()
-    lower = 0
     findParentLoop = True
-    while(findParentLoop == True):
-        for i in range (len(fitness)):
-            if ((randNo>lower) and (randNo<lower + fitnessProportions[i])):
-                if(i!=parentsIndices[0]): #not same as previous parent
-                    parentsIndices.append(i)
-                    findParentLoop = False
-                    print("-----2nd parent index------",i)                    
-            lower = lower + fitnessProportions[i]
+    for n in range (nSelect):
+        findParentLoop = True
+        while(findParentLoop == True):
+            randNo = random()
+            lower = 0
+            for i in range (len(fitness)):
+                if ((randNo>lower) and (randNo<lower + fitnessProportions[i])):
+                    if(i not in parentsIndices):
+                        parentsIndices.append(i)
+                        print("-----",n,"th parent index------",i)
+                        findParentLoop = False
+                lower = lower + fitnessProportions[i]
     return parentsIndices
 
 def nth_largest(n, iter):
@@ -192,7 +186,7 @@ def crossOver(parentsIndex, population, nChildren):
         child2.append(-222)
 
     #generating child 
-    for i in range (1,int(nChildren/2)):
+    for i in range (0,int(nChildren/2)):
         # child 1    
         start = nPortions*i
         child1[start:start+ nPortions] = parent1[start:start+ nPortions]
@@ -243,7 +237,7 @@ def mutation(children, rate):
         if (randNo<rate):
             # switching calues
             switchPos1 = randint(0, int(194/2))
-            switchPos2 = randint(int(194/2), 194)
+            switchPos2 = randint(int(194/2), 193)
             temp = mutatedChildren[i][switchPos1]
             mutatedChildren[i][switchPos1] = mutatedChildren[i][switchPos2]
             mutatedChildren[i][switchPos2] = temp
@@ -263,7 +257,7 @@ def main():
     # Population[3] has the fitness[3]
     
     # choosing parents 
-    #parents = fitnessProportionalSelection(fitness)
+    parents = fitnessProportionalSelection(fitness, 2)
     #parents = rankbasedSelection(fitness)
     parentsIndex = binaryTournament(fitness)
     #crossover
@@ -273,6 +267,6 @@ def main():
     for i in range (len(children)):
         population.append(children[i])
         fitness.append(getFitnessOfChromo(children[i], data))
-
+    
     
 main();
