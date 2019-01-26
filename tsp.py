@@ -247,8 +247,6 @@ def mutation(children, rate):
             temp = mutatedChildren[i][switchPos1]
             mutatedChildren[i][switchPos1] = mutatedChildren[i][switchPos2]
             mutatedChildren[i][switchPos2] = temp
-    mutatedChildren[0] = "------------------------------------------------------asd"
-    #print(children)
     return mutatedChildren
         
 #main
@@ -268,12 +266,13 @@ def main():
     #parents = fitnessProportionalSelection(fitness)
     #parents = rankbasedSelection(fitness)
     parentsIndex = binaryTournament(fitness)
+    #crossover
     children = crossOver(parentsIndex, population, 10);
-    mutatedChildren = mutation(children, 0.5)
-    print("org:",children)
-    print("---------")
-    print("fake:",mutatedChildren)
-    if ((children)==(mutatedChildren)):
-        print("asdasdasd")
+    children = mutation(children, 0.5) #mutated children
+    #compute fitness of children
+    for i in range (len(children)):
+        population.append(children[i])
+        fitness.append(getFitnessOfChromo(children[i], data))
+
     
 main();
