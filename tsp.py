@@ -152,61 +152,57 @@ def binaryTournament(fitness, nSelect):
     return(parentsIndices)
     
     
-def crossOver(parentsIndex, population, nChildren):
+def crossOver(parentsIndex, population):
     parent1 = population[parentsIndex[0]]
     parent2 = population[parentsIndex[1]]
     producedChildren = []
-    nPortions = int(194/nChildren) 
     child1 = []
     child2 = []
     #generating template
     for i in range(194):
         child1.append(-222)
         child2.append(-222)
-
-    #generating child 
-    for i in range (0,int(nChildren/2)):
-        # child 1    
-        start = nPortions*i
-        child1[start:start+ nPortions] = parent1[start:start+ nPortions]
-        isChildComplete = False;
-        childIndex = start+ nPortions
-        ParentIndex = start+ nPortions
-        while(isChildComplete==False):
-            if(parent2[ParentIndex] not in child1[start:start+ nPortions]):
-                child1[childIndex] = parent2[ParentIndex];
-                childIndex+= 1
-                ParentIndex+= 1
-            elif (parent2[ParentIndex] in child1[start:start+ nPortions]):
-                ParentIndex+= 1
-            if (ParentIndex==len(child1)):
-                ParentIndex = 0
-            if (childIndex==len(child1)):
-                childIndex = 0
-            if(childIndex == start):
-                isChildComplete = True
-        # child 2
-        start = nPortions*i
-        child2[start:start+ nPortions] = parent2[start:start+ nPortions]
-        isChildComplete = False;
-        childIndex = start+ nPortions
-        ParentIndex = start+ nPortions
-        while(isChildComplete==False):
-            if(parent1[ParentIndex] not in child2[start:start+ nPortions]):
-                child2[childIndex] = parent1[ParentIndex];
-                childIndex+= 1
-                ParentIndex+= 1
-            elif (parent1[ParentIndex] in child2[start:start+ nPortions]):
-                ParentIndex+= 1
-            if (ParentIndex==len(child2)):
-                ParentIndex = 0
-            if (childIndex==len(child2)):
-                childIndex = 0
-            if(childIndex == start):
-                isChildComplete = True
-        #adding child
-        producedChildren.append(child1)
-        producedChildren.append(child2)
+    #generating child
+        
+    # child 1    
+    child1[30:80] = parent1[30:80]
+    isChildComplete = False;
+    childIndex = 80
+    ParentIndex = 80
+    while(isChildComplete==False):
+        if(parent2[ParentIndex] not in child1[30:80]):
+            child1[childIndex] = parent2[ParentIndex];
+            childIndex+= 1
+            ParentIndex+= 1
+        elif (parent2[ParentIndex] in child1[30:80]):
+            ParentIndex+= 1
+        if (ParentIndex==len(child1)):
+            ParentIndex = 0
+        if (childIndex==len(child1)):
+            childIndex = 0
+        if(childIndex == 30):
+            isChildComplete = True
+    # child 2
+    child2[30:80] = parent2[30:80]
+    isChildComplete = False;
+    childIndex = 80
+    ParentIndex = 80
+    while(isChildComplete==False):
+        if(parent1[ParentIndex] not in child2[30:80]):
+            child2[childIndex] = parent1[ParentIndex];
+            childIndex+= 1
+            ParentIndex+= 1
+        elif (parent1[ParentIndex] in child2[30:80]):
+            ParentIndex+= 1
+        if (ParentIndex==len(child2)):
+            ParentIndex = 0
+        if (childIndex==len(child2)):
+            childIndex = 0
+        if(childIndex == 30):
+            isChildComplete = True
+    #adding child
+    producedChildren.append(child1)
+    producedChildren.append(child2)
     return(producedChildren)        
 
 def mutation(children, rate):
@@ -229,7 +225,7 @@ def main():
     # setting some variables
     nPopulation = 30
     mutationRate = 0.5
-    nChildren = 10
+    nChildren = 10 #must be even
     nGenerations = 100
     # generate initial population
     population = generateRandomPopulation(nPopulation)
@@ -250,7 +246,7 @@ def main():
         #parentsIndex = binaryTournament(fitness,2)
         
         #crossover
-        children = crossOver(parentsIndex, population, nChildren);
+        children = crossOver(parentsIndex, population);
 
         children = mutation(children, mutationRate) #mutated children
         
