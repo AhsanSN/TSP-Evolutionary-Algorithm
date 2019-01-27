@@ -77,7 +77,6 @@ def fitnessProportionalSelection(fitness, nSelect):
                 if ((randNo>lower) and (randNo<lower + fitnessProportions[i])):
                     if(i not in parentsIndices):
                         parentsIndices.append(i)
-                        print("-----",n,"th parent index------",i)
                         findParentLoop = False
                 lower = lower + fitnessProportions[i]
     return parentsIndices
@@ -116,7 +115,6 @@ def rankbasedSelection(fitness, nSelect):
                 if ((randNo>lower) and (randNo<lower + ranksProportion[i])):
                     if(i not in parentsIndices):
                         parentsIndices.append(i)
-                        print("-----",n,"th parent index------",i)
                         findParentLoop = False
                 lower = lower + ranksProportion[i]
     return parentsIndices
@@ -131,7 +129,6 @@ def binaryTournament(fitness, nSelect):
         while (poolLoop):
             for i in range (2):
                 randNo = randint(0, len(fitness)-1)
-                print(len(parentsIndices),len(fitness))
                 if(len(parentsIndices)==len(fitness)-1):
                     poolLoop = False;
                 if ((randNo not in parentsIndices) and (len(parentsIndices)<len(fitness)+1)):
@@ -229,26 +226,47 @@ def mutation(children, rate):
 
 def main():
     data = readData()
+    # setting some variables
+    nPopulation = 30
+    mutationRate = 0.5
+    nChildren = 10
+    nGenerations = 100
     # generate initial population
-    population = generateRandomPopulation(30)
+    population = generateRandomPopulation(nPopulation)
     fitness = []
     # compute fitness
     for i in population:
         fitness.append(getFitnessOfChromo(i, data))
     #print("fitness:",fitness)
     # Population[3] has the fitness[3]
-    
-    # choosing parents 
-    #parents = fitnessProportionalSelection(fitness, 2)
-    #parents = rankbasedSelection(fitness, 2)
-    parentsIndex = binaryTournament(fitness,5)
-    #crossover
-    children = crossOver(parentsIndex, population, 10);
-    children = mutation(children, 0.5) #mutated children
-    #compute fitness of children
-    for i in range (len(children)):
-        population.append(children[i])
-        fitness.append(getFitnessOfChromo(children[i], data))
-    
+
+    #begin loop
+    for generation in range (100):
+        if(generation%10==0):            
+            print(generation)
+        # choosing parents 
+        #parentsIndex = fitnessProportionalSelection(fitness, 2)
+        parentsIndex = rankbasedSelection(fitness, 2)
+        #parentsIndex = binaryTournament(fitness,2)
+        
+        #crossover
+        children = crossOver(parentsIndex, population, nChildren);
+
+        children = mutation(children, mutationRate) #mutated children
+        
+        #compute fitness of children
+        for i in range (len(children)):
+            population.append(children[i])
+            fitness.append(getFitnessOfChromo(children[i], data))
+            
+        # select new population        
+        populationIndices = fitnessProportionalSelection(fitness, nPopulation)
+        tempPopulation = []
+        tempFitness = []
+        for i in (populationIndices):
+            tempFitness.append(fitness[i])
+            tempPopulation.append(population[i])
+        population = tempPopulation
+        fitness = tempFitness
     
 main();
