@@ -180,6 +180,10 @@ def binaryTournament(fitness, nSelect):
     
     
 def crossOver(parentsIndex, population):
+    startCopyIndex = randint(1, 190)
+    finishCopyIndex = randint(startCopyIndex, 193)
+    
+    
     parent1 = population[parentsIndex[0]]
     parent2 = population[parentsIndex[1]]
     producedChildren = []
@@ -191,41 +195,41 @@ def crossOver(parentsIndex, population):
         child2.append(-222)
     #generating child
         
-    # child 1    
-    child1[30:80] = parent1[30:80]
+    # child 1
+    child1[startCopyIndex:finishCopyIndex] = parent1[startCopyIndex:finishCopyIndex]
     isChildComplete = False;
-    childIndex = 80
-    ParentIndex = 80
+    childIndex = finishCopyIndex
+    ParentIndex = finishCopyIndex
     while(isChildComplete==False):
-        if(parent2[ParentIndex] not in child1[30:80]):
+        if(parent2[ParentIndex] not in child1[startCopyIndex:finishCopyIndex]):
             child1[childIndex] = parent2[ParentIndex];
             childIndex+= 1
             ParentIndex+= 1
-        elif (parent2[ParentIndex] in child1[30:80]):
+        elif (parent2[ParentIndex] in child1[startCopyIndex:finishCopyIndex]):
             ParentIndex+= 1
         if (ParentIndex==len(child1)):
             ParentIndex = 0
         if (childIndex==len(child1)):
             childIndex = 0
-        if(childIndex == 30):
+        if(childIndex == startCopyIndex):
             isChildComplete = True
     # child 2
-    child2[30:80] = parent2[30:80]
+    child2[startCopyIndex:finishCopyIndex] = parent2[startCopyIndex:finishCopyIndex]
     isChildComplete = False;
-    childIndex = 80
-    ParentIndex = 80
+    childIndex = finishCopyIndex
+    ParentIndex = finishCopyIndex
     while(isChildComplete==False):
-        if(parent1[ParentIndex] not in child2[30:80]):
+        if(parent1[ParentIndex] not in child2[startCopyIndex:finishCopyIndex]):
             child2[childIndex] = parent1[ParentIndex];
             childIndex+= 1
             ParentIndex+= 1
-        elif (parent1[ParentIndex] in child2[30:80]):
+        elif (parent1[ParentIndex] in child2[startCopyIndex:finishCopyIndex]):
             ParentIndex+= 1
         if (ParentIndex==len(child2)):
             ParentIndex = 0
         if (childIndex==len(child2)):
             childIndex = 0
-        if(childIndex == 30):
+        if(childIndex == startCopyIndex):
             isChildComplete = True
     #adding child
     producedChildren.append(child1)
@@ -267,7 +271,7 @@ def main():
 
     #begin loop
     for generation in range (nGenerations):
-        if(generation%1==0):            
+        if(generation%10==0):            
             print("generation:",generation)
 
             #fitness statistics
