@@ -17,11 +17,18 @@ def generateRandomChromosome():
         chro.insert(i,randNo)
     return(chro)
 
-def getFitnessOfChromo(chromo, data):
+def getFitnessOfChromo(chromo, data): #doesnt show distance
     total = getDistFromCity(chromo[0], chromo[1], data)
     for i in range (2, 194):
         total = total + getDistFromCity(chromo[i-1],chromo[i], data)
-    return(total)
+    total = 1000000000/total
+    return(total) #the less the total the greater the fitness
+
+def getFitnessAsDistance(chromo, data): #doesnt show distance
+    total = getDistFromCity(chromo[0], chromo[1], data)
+    for i in range (2, 194):
+        total = total + getDistFromCity(chromo[i-1],chromo[i], data)
+    return(total) #the less the total the greater the fitness
 
 def generateRandomPopulation(size): # generates Population size: 30
     population = []
@@ -57,14 +64,26 @@ def getDistFromCity(cityNumber1, cityNumber2, data):
 
 #parent selection procedures
 
-def fitnessProportionalSelection(fitness, nSelect):
+def fitnessProportionalSelection(fitness, fitnessDistance, nSelect, selectForParent):
     fitnessSum = 0
     fitnessProportions = []
     parentsIndices = []
-    for i in fitness:
-        fitnessSum = fitnessSum + i
-    for i in fitness:
-        fitnessProportions.append(i/fitnessSum)
+    appendValue = 0
+    # for parent selection
+    if (selectForParent==1):
+        for i in fitness:
+            fitnessSum = fitnessSum + i
+        for i in fitness:
+            fitnessProportions.append(i/fitnessSum)
+    # for weak selection
+    if (selectForParent==0):
+        for i in fitnessDistance:
+            fitnessSum = fitnessSum + i
+        for i in fitnessDistance:
+            fitnessProportions.append(i/fitnessSum)
+    #print(fitnessProportions)
+    
+    #print("parent",selectForParent)
     #choosing parents
     for n in range (nSelect):
         findParentLoop = True
@@ -223,46 +242,56 @@ def mutation(children, rate):
 def main():
     data = readData()
     # setting some variables
-    nPopulation = 30
-    mutationRate = 0.5
-    nChildren = 10 #must be even
+    nPopulation = 100
+    mutationRate = 0.2
+    nChildren = 8 #must be even
     nGenerations = 100
     # generate initial population
     population = generateRandomPopulation(nPopulation)
     fitness = []
+    fitnessDistance = []
     # compute fitness
     for i in population:
         fitness.append(getFitnessOfChromo(i, data))
+        fitnessDistance.append(getFitnessAsDistance(i, data))
     #print("fitness:",fitness)
     # Population[3] has the fitness[3]
 
     #begin loop
-    for generation in range (100):
-        if(generation%10==0):            
-            print(generation)
-        # choosing parents 
-        #parentsIndex = fitnessProportionalSelection(fitness, 2)
-        parentsIndex = rankbasedSelection(fitness, 2)
-        #parentsIndex = binaryTournament(fitness,2)
-        
-        #crossover
-        children = crossOver(parentsIndex, population);
+    for generation in range (nGenerations):
+        if(generation%1==0):            
+            print("generation:",generation)
 
-        children = mutation(children, mutationRate) #mutated children
-        
-        #compute fitness of children
-        for i in range (len(children)):
-            population.append(children[i])
-            fitness.append(getFitnessOfChromo(children[i], data))
+            #fitness statistics
+            print("avg distance: ", sum(fitnessDistance) / float(len(fitnessDistance)))
+            print("min distance: ", min(fitnessDistance))
+        for childGeneration in range (nChildren//2):
+            # choosing parents 
+            parentsIndex = fitnessProportionalSelection(fitness,fitnessDistance, 2, 1)
+            #parentsIndex = rankbasedSelection(fitness, 2)
+            #parentsIndex = binaryTournament(fitness,2)
             
-        # select new population        
-        populationIndices = fitnessProportionalSelection(fitness, nPopulation)
-        tempPopulation = []
-        tempFitness = []
-        for i in (populationIndices):
-            tempFitness.append(fitness[i])
-            tempPopulation.append(population[i])
-        population = tempPopulation
-        fitness = tempFitness
+            children = crossOver(parentsIndex, population);
+            children = mutation(children, mutationRate) #mutated children
+        
+            #compute fitness of children
+            for i in range (len(children)):
+                population.append(children[i])
+                fitness.append(getFitnessOfChromo(children[i], data))
+                fitnessDistance.append(getFitnessAsDistance(children[i], data))
+                
+            # select new population        
+            populationIndices = fitnessProportionalSelection(fitness, fitnessDistance, nPopulation, 0)
+            tempPopulation = []
+            tempFitness = []
+            tempFitnessDistance = []
+            for i in (populationIndices):
+                tempFitness.append(fitness[i])
+                tempFitnessDistance.append(fitnessDistance[i])
+                tempPopulation.append(population[i])
+                
+            population = tempPopulation
+            fitness = tempFitness
+            fitnessDistance = tempFitnessDistance
     
 main();
