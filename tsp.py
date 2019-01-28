@@ -146,11 +146,17 @@ def rankbasedSelection(fitness, fitnessDistance,nSelect, selectParent):
                 lower = lower + ranksProportion[i]
     return parentsIndices
 
-def binaryTournament(fitness, nSelect):
+def binaryTournament(fitness,fitnessDistance, nSelect, parentSelect):
     parentsIndices = []
     pool = []
     poolLoop = True
     poolBest = 0
+    fitnessArray = []
+    # select if for killing or parents
+    if(parentSelect == 1):
+        fitnessArray = fitness
+    elif (parentSelect == 0):
+        fitnessArray = fitnessDistance
     #players for pool1
     for n in range (nSelect):
         while (poolLoop):
@@ -165,13 +171,23 @@ def binaryTournament(fitness, nSelect):
                             poolLoop = False
                     if(len(pool)==0):
                         pool.append(randNo)
-        #best from pool 1
+        #best from pool 1            
         if (len(pool)==2):
-            if(fitness[pool[0]]>fitness[pool[1]]):
-                poolBest = pool[0];
-            if(fitness[pool[0]]<fitness[pool[1]]):
-                poolBest = pool[1];
-            parentsIndices.append(poolBest)
+            # for parent select
+            if(parentSelect == 1):
+                if(fitnessArray[pool[0]]>fitnessArray[pool[1]]):
+                    poolBest = pool[0];
+                if(fitnessArray[pool[0]]<fitnessArray[pool[1]]):
+                    poolBest = pool[1];
+                parentsIndices.append(poolBest)
+            # for killing select
+            if(parentSelect == 0):
+                if(fitnessArray[pool[0]]<fitnessArray[pool[1]]):
+                    poolBest = pool[0];
+                if(fitnessArray[pool[0]]>fitnessArray[pool[1]]):
+                    poolBest = pool[1];
+                parentsIndices.append(poolBest)
+                
         if (len(parentsIndices)<nSelect):
             poolLoop = True
             pool = []
@@ -257,7 +273,7 @@ def main():
     nPopulation = 100
     mutationRate = 0.2
     nChildren = 10 #must be even
-    nGenerations = 100
+    nGenerations = 1000
     # generate initial population
     population = generateRandomPopulation(nPopulation)
     fitness = []
@@ -280,8 +296,8 @@ def main():
         for childGeneration in range (nChildren//2):
             # choosing parents 
             #parentsIndex = fitnessProportionalSelection(fitness,fitnessDistance, 2, 1)
-            parentsIndex = rankbasedSelection(fitness, fitnessDistance, 2, 1)
-            #parentsIndex = binaryTournament(fitness,2)
+            #parentsIndex = rankbasedSelection(fitness, fitnessDistance, 2, 1)
+            parentsIndex = binaryTournament(fitness, fitnessDistance, 2, 1)
             
             children = crossOver(parentsIndex, population);
             children = mutation(children, mutationRate) #mutated children
@@ -293,8 +309,9 @@ def main():
                 fitnessDistance.append(getFitnessAsDistance(children[i], data))
                 
             # select new population        
-            populationIndices = fitnessProportionalSelection(fitness, fitnessDistance, nPopulation, 0)
-            populationIndices = rankbasedSelection(fitness, fitnessDistance, nPopulation, 0)
+            #populationIndices = fitnessProportionalSelection(fitness, fitnessDistance, nPopulation, 0)
+            #populationIndices = rankbasedSelection(fitness, fitnessDistance, nPopulation, 0)
+            populationIndices = binaryTournament(fitness, fitnessDistance, nPopulation, 0)
 
             tempPopulation = []
             tempFitness = []
