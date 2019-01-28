@@ -64,26 +64,15 @@ def getDistFromCity(cityNumber1, cityNumber2, data):
 
 #parent selection procedures
 
-def fitnessProportionalSelection(fitness, fitnessDistance, nSelect, selectForParent):
+def fitnessProportionalSelection(fitness, nSelect):
     fitnessSum = 0
     fitnessProportions = []
     parentsIndices = []
     appendValue = 0
-    # for parent selection
-    if (selectForParent==1):
-        for i in fitness:
-            fitnessSum = fitnessSum + i
-        for i in fitness:
-            fitnessProportions.append(i/fitnessSum)
-    # for weak selection
-    if (selectForParent==0):
-        for i in fitnessDistance:
-            fitnessSum = fitnessSum + i
-        for i in fitnessDistance:
-            fitnessProportions.append(i/fitnessSum)
-    #print(fitnessProportions)
-    
-    #print("parent",selectForParent)
+    for i in fitness:
+        fitnessSum = fitnessSum + i
+    for i in fitness:
+        fitnessProportions.append(i/fitnessSum)
     #choosing parents
     for n in range (nSelect):
         findParentLoop = True
@@ -103,7 +92,7 @@ def fitnessProportionalSelection(fitness, fitnessDistance, nSelect, selectForPar
 def nth_largest(n, iter):
     return heapq.nlargest(n, iter)[-1]
 
-def rankbasedSelection(fitness, fitnessDistance,nSelect, selectParent):
+def rankbasedSelection(fitness, nSelect):
     rankSum = 0
     ranksProportion = []
     parentsIndices = []
@@ -113,17 +102,10 @@ def rankbasedSelection(fitness, fitnessDistance,nSelect, selectParent):
         ranks.append(0)
     #finding ranks
     for i in range (1,len(fitness)+1):
-        if (selectParent==1):
-            nthLargestElement = nth_largest(i, fitness)
-        if (selectParent==0):
-            nthLargestElement = nth_largest(i, fitnessDistance)
+        nthLargestElement = nth_largest(i, fitness)
         for j in range (len(fitness)):
-            if (selectParent==1):
-                if (nthLargestElement == fitness[j]):
-                    ranks[j] = i;
-            if (selectParent==0):
-                if (nthLargestElement == fitnessDistance[j]):
-                    ranks[j] = i;
+            if (nthLargestElement == fitness[j]):
+                ranks[j] = i;
     # rank sum for calculation proportions
     
     for i in ranks:
@@ -146,17 +128,11 @@ def rankbasedSelection(fitness, fitnessDistance,nSelect, selectParent):
                 lower = lower + ranksProportion[i]
     return parentsIndices
 
-def binaryTournament(fitness,fitnessDistance, nSelect, parentSelect):
+def binaryTournament(fitness, nSelect, parentSelect=1):
     parentsIndices = []
     pool = []
     poolLoop = True
     poolBest = 0
-    fitnessArray = []
-    # select if for killing or parents
-    if(parentSelect == 1):
-        fitnessArray = fitness
-    elif (parentSelect == 0):
-        fitnessArray = fitnessDistance
     #players for pool1
     for n in range (nSelect):
         while (poolLoop):
@@ -175,16 +151,9 @@ def binaryTournament(fitness,fitnessDistance, nSelect, parentSelect):
         if (len(pool)==2):
             # for parent select
             if(parentSelect == 1):
-                if(fitnessArray[pool[0]]>fitnessArray[pool[1]]):
+                if(fitness[pool[0]]>fitness[pool[1]]):
                     poolBest = pool[0];
-                if(fitnessArray[pool[0]]<fitnessArray[pool[1]]):
-                    poolBest = pool[1];
-                parentsIndices.append(poolBest)
-            # for killing select
-            if(parentSelect == 0):
-                if(fitnessArray[pool[0]]<fitnessArray[pool[1]]):
-                    poolBest = pool[0];
-                if(fitnessArray[pool[0]]>fitnessArray[pool[1]]):
+                if(fitness[pool[0]]<fitness[pool[1]]):
                     poolBest = pool[1];
                 parentsIndices.append(poolBest)
                 
@@ -295,9 +264,9 @@ def main():
             print("min distance: ", min(fitnessDistance))
         for childGeneration in range (nChildren//2):
             # choosing parents 
-            #parentsIndex = fitnessProportionalSelection(fitness,fitnessDistance, 2, 1)
-            #parentsIndex = rankbasedSelection(fitness, fitnessDistance, 2, 1)
-            parentsIndex = binaryTournament(fitness, fitnessDistance, 2, 1)
+            parentsIndex = fitnessProportionalSelection(fitness, 2)
+            #parentsIndex = rankbasedSelection(fitness, 2 )
+            #parentsIndex = binaryTournament(fitness, 2)
             
             children = crossOver(parentsIndex, population);
             children = mutation(children, mutationRate) #mutated children
@@ -309,9 +278,9 @@ def main():
                 fitnessDistance.append(getFitnessAsDistance(children[i], data))
                 
             # select new population        
-            #populationIndices = fitnessProportionalSelection(fitness, fitnessDistance, nPopulation, 0)
-            #populationIndices = rankbasedSelection(fitness, fitnessDistance, nPopulation, 0)
-            populationIndices = binaryTournament(fitness, fitnessDistance, nPopulation, 0)
+            #populationIndices = fitnessProportionalSelection(fitness, nPopulation)
+            populationIndices = rankbasedSelection(fitness, nPopulation)
+            #populationIndices = binaryTournament(fitness, nPopulation)
 
             tempPopulation = []
             tempFitness = []
