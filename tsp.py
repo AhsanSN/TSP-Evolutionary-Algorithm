@@ -21,14 +21,14 @@ def getFitnessOfChromo(chromo, data): #doesnt show distance
     total = getDistFromCity(chromo[0], chromo[1], data)
     for i in range (2, 194):
         total = total + getDistFromCity(chromo[i-1],chromo[i], data)
-    return(100000/total) #the less the total the greater the fitness
+    total = 1000000000/total
+    return(total) #the less the total the greater the fitness
 
 def getFitnessAsDistance(chromo, data): #doesnt show distance
     total = getDistFromCity(chromo[0], chromo[1], data)
     for i in range (2, 194):
         total = total + getDistFromCity(chromo[i-1],chromo[i], data)
     return(total) #the less the total the greater the fitness
-
 
 def generateRandomPopulation(size): # generates Population size: 30
     population = []
@@ -64,19 +64,26 @@ def getDistFromCity(cityNumber1, cityNumber2, data):
 
 #parent selection procedures
 
-def fitnessProportionalSelection(fitness, nSelect, selectForParent):
+def fitnessProportionalSelection(fitness, fitnessDistance, nSelect, selectForParent):
     fitnessSum = 0
     fitnessProportions = []
     parentsIndices = []
     appendValue = 0
-    for i in fitness:
-        fitnessSum = fitnessSum + i
-    for i in fitness:
-        if (selectForParent ==1):
-            appendValue = i/fitnessSum
-        elif (selectForParent ==1):
-            appendValue = fitnessSum/i
-        fitnessProportions.append(appendValue)
+    # for parent selection
+    if (selectForParent==1):
+        for i in fitness:
+            fitnessSum = fitnessSum + i
+        for i in fitness:
+            fitnessProportions.append(i/fitnessSum)
+    # for weak selection
+    if (selectForParent==0):
+        for i in fitnessDistance:
+            fitnessSum = fitnessSum + i
+        for i in fitnessDistance:
+            fitnessProportions.append(i/fitnessSum)
+    #print(fitnessProportions)
+    
+    #print("parent",selectForParent)
     #choosing parents
     for n in range (nSelect):
         findParentLoop = True
@@ -96,7 +103,7 @@ def fitnessProportionalSelection(fitness, nSelect, selectForParent):
 def nth_largest(n, iter):
     return heapq.nlargest(n, iter)[-1]
 
-def rankbasedSelection(fitness, nSelect):
+def rankbasedSelection(fitness, fitnessDistance,nSelect, selectParent):
     rankSum = 0
     ranksProportion = []
     parentsIndices = []
@@ -106,11 +113,19 @@ def rankbasedSelection(fitness, nSelect):
         ranks.append(0)
     #finding ranks
     for i in range (1,len(fitness)+1):
-        nthLargestElement = nth_largest(i, fitness)
+        if (selectParent==1):
+            nthLargestElement = nth_largest(i, fitness)
+        if (selectParent==0):
+            nthLargestElement = nth_largest(i, fitnessDistance)
         for j in range (len(fitness)):
-            if (nthLargestElement == fitness[j]):
-                ranks[j] = i;
+            if (selectParent==1):
+                if (nthLargestElement == fitness[j]):
+                    ranks[j] = i;
+            if (selectParent==0):
+                if (nthLargestElement == fitnessDistance[j]):
+                    ranks[j] = i;
     # rank sum for calculation proportions
+    
     for i in ranks:
         rankSum = rankSum + i
     for i in ranks:
@@ -131,11 +146,17 @@ def rankbasedSelection(fitness, nSelect):
                 lower = lower + ranksProportion[i]
     return parentsIndices
 
-def binaryTournament(fitness, nSelect):
+def binaryTournament(fitness,fitnessDistance, nSelect, parentSelect):
     parentsIndices = []
     pool = []
     poolLoop = True
     poolBest = 0
+    fitnessArray = []
+    # select if for killing or parents
+    if(parentSelect == 1):
+        fitnessArray = fitness
+    elif (parentSelect == 0):
+        fitnessArray = fitnessDistance
     #players for pool1
     for n in range (nSelect):
         while (poolLoop):
@@ -150,13 +171,23 @@ def binaryTournament(fitness, nSelect):
                             poolLoop = False
                     if(len(pool)==0):
                         pool.append(randNo)
-        #best from pool 1
+        #best from pool 1            
         if (len(pool)==2):
-            if(fitness[pool[0]]>fitness[pool[1]]):
-                poolBest = pool[0];
-            if(fitness[pool[0]]<fitness[pool[1]]):
-                poolBest = pool[1];
-            parentsIndices.append(poolBest)
+            # for parent select
+            if(parentSelect == 1):
+                if(fitnessArray[pool[0]]>fitnessArray[pool[1]]):
+                    poolBest = pool[0];
+                if(fitnessArray[pool[0]]<fitnessArray[pool[1]]):
+                    poolBest = pool[1];
+                parentsIndices.append(poolBest)
+            # for killing select
+            if(parentSelect == 0):
+                if(fitnessArray[pool[0]]<fitnessArray[pool[1]]):
+                    poolBest = pool[0];
+                if(fitnessArray[pool[0]]>fitnessArray[pool[1]]):
+                    poolBest = pool[1];
+                parentsIndices.append(poolBest)
+                
         if (len(parentsIndices)<nSelect):
             poolLoop = True
             pool = []
@@ -219,7 +250,7 @@ def crossOver(parentsIndex, population):
     #adding child
     producedChildren.append(child1)
     producedChildren.append(child2)
-    return(producedChildren)       
+    return(producedChildren)        
 
 def mutation(children, rate):
     mutatedChildren = children
@@ -239,36 +270,34 @@ def mutation(children, rate):
 def main():
     data = readData()
     # setting some variables
-    nPopulation = 30
-    mutationRate = 0.1
-    nChildren = 8 #must be even
-    nGenerations = 2
+    nPopulation = 100
+    mutationRate = 0.2
+    nChildren = 10 #must be even
+    nGenerations = 1000
     # generate initial population
     population = generateRandomPopulation(nPopulation)
     fitness = []
+    fitnessDistance = []
     # compute fitness
     for i in population:
         fitness.append(getFitnessOfChromo(i, data))
+        fitnessDistance.append(getFitnessAsDistance(i, data))
     #print("fitness:",fitness)
     # Population[3] has the fitness[3]
 
     #begin loop
     for generation in range (nGenerations):
-        if(generation%1==0):            
+        if(generation%10==0):            
             print("generation:",generation)
 
             #fitness statistics
-            totalFitnessAsDistance = 0
-            for i in range (len(population)):
-                totalFitnessAsDistance = totalFitnessAsDistance + getFitnessAsDistance(population[i],data)
-            print("average fitness:",totalFitnessAsDistance)
-
-                #crossover
+            print("avg distance: ", sum(fitnessDistance) / float(len(fitnessDistance)))
+            print("min distance: ", min(fitnessDistance))
         for childGeneration in range (nChildren//2):
             # choosing parents 
-            parentsIndex = fitnessProportionalSelection(fitness, 2, 1)
-            #parentsIndex = rankbasedSelection(fitness, 2)
-            #parentsIndex = binaryTournament(fitness,2)
+            #parentsIndex = fitnessProportionalSelection(fitness,fitnessDistance, 2, 1)
+            #parentsIndex = rankbasedSelection(fitness, fitnessDistance, 2, 1)
+            parentsIndex = binaryTournament(fitness, fitnessDistance, 2, 1)
             
             children = crossOver(parentsIndex, population);
             children = mutation(children, mutationRate) #mutated children
@@ -277,15 +306,23 @@ def main():
             for i in range (len(children)):
                 population.append(children[i])
                 fitness.append(getFitnessOfChromo(children[i], data))
+                fitnessDistance.append(getFitnessAsDistance(children[i], data))
                 
             # select new population        
-            populationIndices = fitnessProportionalSelection(fitness, nPopulation, 0)
+            #populationIndices = fitnessProportionalSelection(fitness, fitnessDistance, nPopulation, 0)
+            #populationIndices = rankbasedSelection(fitness, fitnessDistance, nPopulation, 0)
+            populationIndices = binaryTournament(fitness, fitnessDistance, nPopulation, 0)
+
             tempPopulation = []
             tempFitness = []
+            tempFitnessDistance = []
             for i in (populationIndices):
                 tempFitness.append(fitness[i])
+                tempFitnessDistance.append(fitnessDistance[i])
                 tempPopulation.append(population[i])
+                
             population = tempPopulation
             fitness = tempFitness
+            fitnessDistance = tempFitnessDistance
     
 main();
