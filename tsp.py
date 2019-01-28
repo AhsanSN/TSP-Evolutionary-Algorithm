@@ -239,17 +239,10 @@ def mutation(children, rate):
 def main():
     data = readData()
     # setting some variables
-<<<<<<< HEAD
     nPopulation = 30
     mutationRate = 0.1
     nChildren = 8 #must be even
     nGenerations = 2
-=======
-    nPopulation = 100
-    mutationRate = 0.2
-    nChildren = 10 #must be even
-    nGenerations = 100
->>>>>>> parent of 4937251... save
     # generate initial population
     population = generateRandomPopulation(nPopulation)
     fitness = []
@@ -273,13 +266,8 @@ def main():
                 #crossover
         for childGeneration in range (nChildren//2):
             # choosing parents 
-<<<<<<< HEAD
             parentsIndex = fitnessProportionalSelection(fitness, 2, 1)
             #parentsIndex = rankbasedSelection(fitness, 2)
-=======
-            #parentsIndex = fitnessProportionalSelection(fitness,fitnessDistance, 2, 1)
-            parentsIndex = rankbasedSelection(fitness, fitnessDistance, 2, 1)
->>>>>>> parent of 4937251... save
             #parentsIndex = binaryTournament(fitness,2)
             
             children = crossOver(parentsIndex, population);
@@ -291,13 +279,7 @@ def main():
                 fitness.append(getFitnessOfChromo(children[i], data))
                 
             # select new population        
-<<<<<<< HEAD
             populationIndices = fitnessProportionalSelection(fitness, nPopulation, 0)
-=======
-            populationIndices = fitnessProportionalSelection(fitness, fitnessDistance, nPopulation, 0)
-            populationIndices = rankbasedSelection(fitness, fitnessDistance, nPopulation, 0)
-
->>>>>>> parent of 4937251... save
             tempPopulation = []
             tempFitness = []
             for i in (populationIndices):
