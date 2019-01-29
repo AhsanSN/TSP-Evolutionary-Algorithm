@@ -237,12 +237,16 @@ def mutation(children, rate):
 #main
 
 def main():
+    averagePerGen = []
+    minPerGen = []
+    minTotal = 0
+    
     data = readData()
     # setting some variables
     nPopulation = 100
     mutationRate = 0.2
     nChildren = 10 #must be even
-    nGenerations = 1000
+    nGenerations = 100
     # generate initial population
     population = generateRandomPopulation(nPopulation)
     fitness = []
@@ -260,12 +264,17 @@ def main():
             print("generation:",generation)
 
             #fitness statistics
+            averagePerGen.append(sum(fitnessDistance) / float(len(fitnessDistance)))
+            if(min(fitnessDistance)<minTotal):
+                minTotal = min(fitnessDistance)
+            minPerGen.append(min(fitnessDistance))
+            
             print("avg distance: ", sum(fitnessDistance) / float(len(fitnessDistance)))
             print("min distance: ", min(fitnessDistance))
         for childGeneration in range (nChildren//2):
             # choosing parents 
-            parentsIndex = fitnessProportionalSelection(fitness, 2)
-            #parentsIndex = rankbasedSelection(fitness, 2 )
+            #parentsIndex = fitnessProportionalSelection(fitness, 2)
+            parentsIndex = rankbasedSelection(fitness, 2 )
             #parentsIndex = binaryTournament(fitness, 2)
             
             children = crossOver(parentsIndex, population);
@@ -279,8 +288,8 @@ def main():
                 
             # select new population        
             #populationIndices = fitnessProportionalSelection(fitness, nPopulation)
-            populationIndices = rankbasedSelection(fitness, nPopulation)
-            #populationIndices = binaryTournament(fitness, nPopulation)
+            #populationIndices = rankbasedSelection(fitness, nPopulation)
+            populationIndices = binaryTournament(fitness, nPopulation)
 
             tempPopulation = []
             tempFitness = []
@@ -293,5 +302,7 @@ def main():
             population = tempPopulation
             fitness = tempFitness
             fitnessDistance = tempFitnessDistance
+    print(averagePerGen)
+    print(minPerGen)
     
 main();
