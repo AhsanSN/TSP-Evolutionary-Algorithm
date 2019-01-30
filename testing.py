@@ -9,4 +9,8 @@ for i in range (200): #nGenearations
             sumAvgs = sumAvgs + a[j][i]
         avgAllIterations.append(sumAvgs / 2)
 
-print("avg2", avgAllIterations)
+#print("avg2", avgAllIterations)
+
+#print(a)
+for i in range (len(a[0])):
+        print("gen", i , a[0][i],a[1][i],"avg,",avgAllIterations[i])
