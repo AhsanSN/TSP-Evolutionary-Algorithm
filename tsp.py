@@ -5,6 +5,8 @@ Sample Chromosome = [1,2,4,65,12,51,42,....32] // length = 194
 from random import *
 import math
 import heapq #finding nth largest
+import matplotlib.pyplot as plt
+import numpy as np
 
 # helper functions
 def generateRandomChromosome(): 
@@ -236,17 +238,26 @@ def mutation(children, rate):
         
 #main
 
+def plotGraph(nGenerations, avgArray, minArray):
+    genArray = []
+    for i in range (nGenerations):
+        genArray.append(i)
+    # red dashes, blue squares and green triangles
+    plt.plot(genArray, avgArray,'r',genArray, minArray,'b')
+    plt.show()
+
+
 def main():
     averagePerGen = []
     minPerGen = []
-    minTotal = 0
+    minTotal = 1000000000
     
     data = readData()
     # setting some variables
-    nPopulation = 100
-    mutationRate = 0.2
+    nPopulation = 60
+    mutationRate = 0.4
     nChildren = 10 #must be even
-    nGenerations = 100
+    nGenerations = 200
     # generate initial population
     population = generateRandomPopulation(nPopulation)
     fitness = []
@@ -260,22 +271,25 @@ def main():
 
     #begin loop
     for generation in range (nGenerations):
-        if(generation%10==0):            
-            print("generation:",generation)
+        if(min(fitnessDistance)<minTotal):
+            minTotal = min(fitnessDistance)
+        averagePerGen.append(sum(fitnessDistance) / float(len(fitnessDistance)))
+        minPerGen.append(minTotal)
+        
+        if(generation%10==0):
+            1;
+            #print("generation:",generation)
 
             #fitness statistics
-            averagePerGen.append(sum(fitnessDistance) / float(len(fitnessDistance)))
-            if(min(fitnessDistance)<minTotal):
-                minTotal = min(fitnessDistance)
-            minPerGen.append(min(fitnessDistance))
+            #print("distance (avg, min): ", sum(fitnessDistance) / float(len(fitnessDistance)), minTotal)
+
+        
             
-            print("avg distance: ", sum(fitnessDistance) / float(len(fitnessDistance)))
-            print("min distance: ", min(fitnessDistance))
         for childGeneration in range (nChildren//2):
             # choosing parents 
             #parentsIndex = fitnessProportionalSelection(fitness, 2)
-            parentsIndex = rankbasedSelection(fitness, 2 )
-            #parentsIndex = binaryTournament(fitness, 2)
+            #parentsIndex = rankbasedSelection(fitness, 2 )
+            parentsIndex = binaryTournament(fitness, 2)
             
             children = crossOver(parentsIndex, population);
             children = mutation(children, mutationRate) #mutated children
@@ -302,7 +316,45 @@ def main():
             population = tempPopulation
             fitness = tempFitness
             fitnessDistance = tempFitnessDistance
-    print(averagePerGen)
-    print(minPerGen)
+    return [averagePerGen,minPerGen]
     
-main();
+
+#fullmain
+def Fullmain():
+    resultArray = []
+    nIterations = 2
+    avgAllIterations = []
+    minAllIterations = []
+    avg_avgAllIterations = []
+    avg_minAllIterations = []
+    '''
+    avgAllIterations = [[12,3,412,3] //len gen, ...]//len 10
+    '''
+    for i in range (nIterations):
+        resultArray = main()
+        print("iteration,", i)
+        avgAllIterations.append(resultArray[0]) # avg of all gen
+        minAllIterations.append(resultArray[1]) # min of all gen
+
+    print("avg1", avgAllIterations)
+    print("min1", minAllIterations)
+    #calculationg averages of avgAllIterations
+    for i in range (200): #nGenearations
+        sumAvgs = 0
+        for j in range (nIterations):
+            sumAvgs = sumAvgs + avgAllIterations[j][i]
+        avg_avgAllIterations.append(sumAvgs / nIterations)
+
+    #calculationg averages of minAllIterations
+    for i in range (200): #nGenearations
+        sumMin = 0
+        for j in range (nIterations):
+            sumMin = sumMin + minAllIterations[j][i]
+        avg_minAllIterations.append(sumMin / nIterations)
+
+    print("avg2", avg_avgAllIterations)
+    print("min2", avg_minAllIterations)
+    
+    plotGraph(len(avg_avgAllIterations),avg_avgAllIterations, avg_minAllIterations)
+
+Fullmain()       
