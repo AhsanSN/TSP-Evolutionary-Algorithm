@@ -130,7 +130,18 @@ def rankbasedSelection(fitness, nSelect):
                 lower = lower + ranksProportion[i]
     return parentsIndices
 
-def binaryTournament(fitness, nSelect, parentSelect=1):
+def randomSelection(fitness, nSelect):
+    selectedIndex = []
+    for i in range (nSelect):
+        isChildComplete = False
+        while(isChildComplete==False):
+            randNo = randint(0, len(fitness)-1)
+            if (randNo) not in selectedIndex:
+                selectedIndex.append(randNo)
+                isChildComplete = True;
+    return selectedIndex
+
+def binaryTournament(fitness, nSelect):
     parentsIndices = []
     pool = []
     poolLoop = True
@@ -288,8 +299,8 @@ def main():
         for childGeneration in range (nChildren//2):
             # choosing parents 
             #parentsIndex = fitnessProportionalSelection(fitness, 2)
-            #parentsIndex = rankbasedSelection(fitness, 2 )
-            parentsIndex = binaryTournament(fitness, 2)
+            parentsIndex = rankbasedSelection(fitness, 2 )
+            #parentsIndex = binaryTournament(fitness, 2)
             
             children = crossOver(parentsIndex, population);
             children = mutation(children, mutationRate) #mutated children
@@ -302,8 +313,8 @@ def main():
                 
             # select new population        
             #populationIndices = fitnessProportionalSelection(fitness, nPopulation)
-            #populationIndices = rankbasedSelection(fitness, nPopulation)
-            populationIndices = binaryTournament(fitness, nPopulation)
+            populationIndices = rankbasedSelection(fitness, nPopulation)
+            #populationIndices = binaryTournament(fitness, nPopulation)
 
             tempPopulation = []
             tempFitness = []
@@ -322,7 +333,7 @@ def main():
 #fullmain
 def Fullmain():
     resultArray = []
-    nIterations = 2
+    nIterations = 10
     avgAllIterations = []
     minAllIterations = []
     avg_avgAllIterations = []
@@ -336,8 +347,6 @@ def Fullmain():
         avgAllIterations.append(resultArray[0]) # avg of all gen
         minAllIterations.append(resultArray[1]) # min of all gen
 
-    print("avg1", avgAllIterations)
-    print("min1", minAllIterations)
     #calculationg averages of avgAllIterations
     for i in range (200): #nGenearations
         sumAvgs = 0
@@ -352,8 +361,6 @@ def Fullmain():
             sumMin = sumMin + minAllIterations[j][i]
         avg_minAllIterations.append(sumMin / nIterations)
 
-    print("avg2", avg_avgAllIterations)
-    print("min2", avg_minAllIterations)
     
     plotGraph(len(avg_avgAllIterations),avg_avgAllIterations, avg_minAllIterations)
 
