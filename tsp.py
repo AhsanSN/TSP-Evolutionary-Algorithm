@@ -11,24 +11,28 @@ import numpy as np
 # helper functions
 def generateRandomChromosome(): 
     chro = []
+    start = 0
     for i in range (0,194):
         #generate random number
         randNo = randint(1, 194)
+        if(len(chro)==0):
+            start = randNo
         while randNo in chro:
             randNo = randint(1, 194)
-        chro.insert(i,randNo)
-    return(chro)
+        chro.append(randNo)
+    chro.append(start)
+    return(chro) #length 195
 
 def getFitnessOfChromo(chromo, data): #doesnt show distance
     total = getDistFromCity(chromo[0], chromo[1], data)
-    for i in range (2, 194):
+    for i in range (2, 195):
         total = total + getDistFromCity(chromo[i-1],chromo[i], data)
     total = 1000000000/total
     return(total) #the less the total the greater the fitness
 
 def getFitnessAsDistance(chromo, data): #doesnt show distance
     total = getDistFromCity(chromo[0], chromo[1], data)
-    for i in range (2, 194):
+    for i in range (2, 195):
         total = total + getDistFromCity(chromo[i-1],chromo[i], data)
     return(total) #the less the total the greater the fitness
 
@@ -141,6 +145,9 @@ def randomSelection(fitness, nSelect):
                 isChildComplete = True;
     return selectedIndex
 
+def truncation(fitness, nSelect):
+    1;
+    
 def binaryTournament(fitness, nSelect):
     parentsIndices = []
     pool = []
@@ -163,12 +170,11 @@ def binaryTournament(fitness, nSelect):
         #best from pool 1            
         if (len(pool)==2):
             # for parent select
-            if(parentSelect == 1):
-                if(fitness[pool[0]]>fitness[pool[1]]):
-                    poolBest = pool[0];
-                if(fitness[pool[0]]<fitness[pool[1]]):
-                    poolBest = pool[1];
-                parentsIndices.append(poolBest)
+            if(fitness[pool[0]]>fitness[pool[1]]):
+                poolBest = pool[0];
+            if(fitness[pool[0]]<fitness[pool[1]]):
+                poolBest = pool[1];
+            parentsIndices.append(poolBest)
                 
         if (len(parentsIndices)<nSelect):
             poolLoop = True
@@ -188,7 +194,7 @@ def crossOver(parentsIndex, population):
     child1 = []
     child2 = []
     #generating template
-    for i in range(194):
+    for i in range(195):
         child1.append(-222)
         child2.append(-222)
     #generating child
@@ -245,6 +251,8 @@ def mutation(children, rate):
             temp = mutatedChildren[i][switchPos1]
             mutatedChildren[i][switchPos1] = mutatedChildren[i][switchPos2]
             mutatedChildren[i][switchPos2] = temp
+            if(switchPos1==0): #complete the chain
+                mutatedChildren[i][194] = mutatedChildren[i][switchPos2]
     return mutatedChildren
         
 #main
@@ -298,9 +306,10 @@ def main():
             
         for childGeneration in range (nChildren//2):
             # choosing parents 
-            #parentsIndex = fitnessProportionalSelection(fitness, 2)
-            parentsIndex = rankbasedSelection(fitness, 2 )
+            parentsIndex = fitnessProportionalSelection(fitness, 2)
+            #parentsIndex = rankbasedSelection(fitness, 2 )
             #parentsIndex = binaryTournament(fitness, 2)
+            #parentsIndex = randomSelection(fitness, 2)
             
             children = crossOver(parentsIndex, population);
             children = mutation(children, mutationRate) #mutated children
@@ -313,8 +322,9 @@ def main():
                 
             # select new population        
             #populationIndices = fitnessProportionalSelection(fitness, nPopulation)
-            populationIndices = rankbasedSelection(fitness, nPopulation)
+            #populationIndices = rankbasedSelection(fitness, nPopulation)
             #populationIndices = binaryTournament(fitness, nPopulation)
+            populationIndices = randomSelection(fitness, nPopulation)
 
             tempPopulation = []
             tempFitness = []
