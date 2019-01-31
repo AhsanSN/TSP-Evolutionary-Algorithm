@@ -317,8 +317,8 @@ def main():
         for childGeneration in range (nChildren//2):
             # choosing parents 
             #parentsIndex = fitnessProportionalSelection(fitness, 2)
-            parentsIndex = rankbasedSelection(fitness, 2 )
-            #parentsIndex = binaryTournament(fitness, 2)
+            #parentsIndex = rankbasedSelection(fitness, 2 )
+            parentsIndex = binaryTournament(fitness, 2)
             #parentsIndex = randomSelection(fitness, 2)
             #parentsIndex = truncation(fitness, 2)
             
