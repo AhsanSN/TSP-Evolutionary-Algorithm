@@ -283,10 +283,10 @@ def main():
     
     data = readData()
     # setting some variables
-    nPopulation = 60
-    mutationRate = 0.4
+    nPopulation = 100
+    mutationRate = 0.3
     nChildren = 10 #must be even
-    nGenerations = 200
+    nGenerations = 20000000000
     # generate initial population
     population = generateRandomPopulation(nPopulation)
     fitness = []
@@ -305,13 +305,12 @@ def main():
         averagePerGen.append(sum(fitnessDistance) / float(len(fitnessDistance)))
         minPerGen.append(minTotal)
         
-        if(generation%10==0):
+        if(generation%100==0):
             1;
-            #print("generation:",generation)
+            print("generation:",generation)
 
             #fitness statistics
-            #print("distance (avg, min): ", sum(fitnessDistance) / float(len(fitnessDistance)), minTotal)
-
+            print("distance (avg, min): ", sum(fitnessDistance) / float(len(fitnessDistance)), minTotal)
         
             
         for childGeneration in range (nChildren//2):
@@ -334,10 +333,10 @@ def main():
                 
             # select new population        
             #populationIndices = fitnessProportionalSelection(fitness, nPopulation)
-            populationIndices = rankbasedSelection(fitness, nPopulation)
+            #populationIndices = rankbasedSelection(fitness, nPopulation)
             #populationIndices = binaryTournament(fitness, nPopulation)
             #populationIndices = randomSelection(fitness, nPopulation)
-            #populationIndices = truncation(fitness, nPopulation)
+            populationIndices = truncation(fitness, nPopulation)
             #print(len(populationIndices))
 
             tempPopulation = []
@@ -386,7 +385,7 @@ def Fullmain():
         avg_minAllIterations.append(sumMin / nIterations)
 
     #collected data
-    
+    '''
     print("generation# Run#1.Average Run#2.Average Run#3.Average Run#4.Average Run#5.Average Run#6.Average Run#7.Average Run#8.Average Run#9.Average Run#10.Average Average.Average")
     for i in range (len(minAllIterations[0])):
         print(i , avgAllIterations[0][i],avgAllIterations[1][i],avgAllIterations[2][i],avgAllIterations[3][i],avgAllIterations[4][i],avgAllIterations[5][i],avgAllIterations[6][i],avgAllIterations[7][i],avgAllIterations[8][i],avgAllIterations[9][i],avg_avgAllIterations[i])
@@ -395,8 +394,9 @@ def Fullmain():
     print("generation# Run#1.BFS Run#2.BFS Run#3.BFS Run#4.BFS Run#5.BFS Run#6.BFS Run#7.BFS Run#8.BFS Run#9.BFS Run#10.BFS Average.BFS")
     for i in range (len(minAllIterations[0])):
         print(i , minAllIterations[0][i],minAllIterations[1][i],minAllIterations[2][i],minAllIterations[3][i],minAllIterations[4][i],minAllIterations[5][i],minAllIterations[6][i],minAllIterations[7][i],minAllIterations[8][i],minAllIterations[9][i],avg_minAllIterations[i])
-    
-    plotGraph(len(avg_avgAllIterations),avg_avgAllIterations, avg_minAllIterations)
+    '''
+    #plotGraph(len(avg_avgAllIterations),avg_avgAllIterations, avg_minAllIterations)
 
 
-Fullmain()       
+#Fullmain()
+main()
