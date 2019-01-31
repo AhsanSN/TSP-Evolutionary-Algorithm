@@ -319,8 +319,8 @@ def main():
             #parentsIndex = fitnessProportionalSelection(fitness, 2)
             #parentsIndex = rankbasedSelection(fitness, 2 )
             #parentsIndex = binaryTournament(fitness, 2)
-            parentsIndex = randomSelection(fitness, 2)
-            #parentsIndex = truncation(fitness, 2)
+            #parentsIndex = randomSelection(fitness, 2)
+            parentsIndex = truncation(fitness, 2)
             
             
             children = crossOver(parentsIndex, population);
@@ -333,8 +333,8 @@ def main():
                 fitnessDistance.append(getFitnessAsDistance(children[i], data))
                 
             # select new population        
-            populationIndices = fitnessProportionalSelection(fitness, nPopulation)
-            #populationIndices = rankbasedSelection(fitness, nPopulation)
+            #populationIndices = fitnessProportionalSelection(fitness, nPopulation)
+            populationIndices = rankbasedSelection(fitness, nPopulation)
             #populationIndices = binaryTournament(fitness, nPopulation)
             #populationIndices = randomSelection(fitness, nPopulation)
             #populationIndices = truncation(fitness, nPopulation)
