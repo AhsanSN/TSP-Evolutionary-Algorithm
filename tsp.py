@@ -283,10 +283,10 @@ def main():
     
     data = readData()
     # setting some variables
-    nPopulation = 100
-    mutationRate = 0.3
+    nPopulation = 60
+    mutationRate = 0.5
     nChildren = 10 #must be even
-    nGenerations = 20000000000
+    nGenerations = 200
     # generate initial population
     population = generateRandomPopulation(nPopulation)
     fitness = []
@@ -307,10 +307,10 @@ def main():
         
         if(generation%100==0):
             1;
-            print("generation:",generation)
+            #print("generation:",generation)
 
             #fitness statistics
-            print("distance (avg, min): ", sum(fitnessDistance) / float(len(fitnessDistance)), minTotal)
+            #print("distance (avg, min): ", sum(fitnessDistance) / float(len(fitnessDistance)), minTotal)
         
             
         for childGeneration in range (nChildren//2):
@@ -331,32 +331,32 @@ def main():
                 fitness.append(getFitnessOfChromo(children[i], data))
                 fitnessDistance.append(getFitnessAsDistance(children[i], data))
                 
-            # select new population        
-            #populationIndices = fitnessProportionalSelection(fitness, nPopulation)
-            #populationIndices = rankbasedSelection(fitness, nPopulation)
-            #populationIndices = binaryTournament(fitness, nPopulation)
-            #populationIndices = randomSelection(fitness, nPopulation)
-            populationIndices = truncation(fitness, nPopulation)
-            #print(len(populationIndices))
+        # select new population        
+        #populationIndices = fitnessProportionalSelection(fitness, nPopulation)
+        #populationIndices = rankbasedSelection(fitness, nPopulation)
+        #populationIndices = binaryTournament(fitness, nPopulation)
+        #populationIndices = randomSelection(fitness, nPopulation)
+        populationIndices = truncation(fitness, nPopulation)
+        #print(len(populationIndices))
 
-            tempPopulation = []
-            tempFitness = []
-            tempFitnessDistance = []
-            for i in (populationIndices):
-                tempFitness.append(fitness[i])
-                tempFitnessDistance.append(fitnessDistance[i])
-                tempPopulation.append(population[i])
-                
-            population = tempPopulation
-            fitness = tempFitness
-            fitnessDistance = tempFitnessDistance
+        tempPopulation = []
+        tempFitness = []
+        tempFitnessDistance = []
+        for i in (populationIndices):
+            tempFitness.append(fitness[i])
+            tempFitnessDistance.append(fitnessDistance[i])
+            tempPopulation.append(population[i])
+            
+        population = tempPopulation
+        fitness = tempFitness
+        fitnessDistance = tempFitnessDistance
     return [averagePerGen,minPerGen]
     
 
 #fullmain
 def Fullmain():
     resultArray = []
-    nIterations = 10
+    nIterations = 2
     avgAllIterations = []
     minAllIterations = []
     avg_avgAllIterations = []
@@ -395,8 +395,8 @@ def Fullmain():
     for i in range (len(minAllIterations[0])):
         print(i , minAllIterations[0][i],minAllIterations[1][i],minAllIterations[2][i],minAllIterations[3][i],minAllIterations[4][i],minAllIterations[5][i],minAllIterations[6][i],minAllIterations[7][i],minAllIterations[8][i],minAllIterations[9][i],avg_minAllIterations[i])
     '''
-    #plotGraph(len(avg_avgAllIterations),avg_avgAllIterations, avg_minAllIterations)
+    plotGraph(len(avg_avgAllIterations),avg_avgAllIterations, avg_minAllIterations)
 
 
-#Fullmain()
-main()
+Fullmain()
+#main()
